@@ -1,1 +1,6 @@
 *.jpg
+/bin/
+/lib/
+/include/
+*.cfg
+/images/
