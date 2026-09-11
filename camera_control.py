@@ -45,7 +45,12 @@ def encode_image(img, filename):
 def camera_set_settings(camera: ZWOCamera):
     settings = read_settings()
 
-    camera.exposure = int(image_metadata['exposure_time'] * 1e6)
+    exposure_time = int(image_metadata['exposure_time'])
+
+    if(exposure_time > 40):
+        exposure_time = 40
+        
+    camera.exposure = int(exposure_time * 1e6)
     camera.gain = image_metadata['gain']    
 
 def take_picture():
