@@ -2,6 +2,9 @@
 
 Continuation of an all-sky camera project at Aalto University
 
+## Specifications
+Camera: ZWO ASI676MC
+
 ## Set-up and Requirments 
 It is recommended to use Python version 3.12.
 
