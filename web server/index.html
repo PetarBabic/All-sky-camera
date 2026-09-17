@@ -20,34 +20,47 @@
         </nav>
     </div>
 
-    <div class="calendar">
-        <div class="month">
-                <ul>
-                    <li class="prev">&#10094;</li>
-                    <li class="next">&#10095;</li>
-                    <li id="currentMonth">
-                    </li>
-                </ul>
-        </div>
-
-        <div class="weekdays">
-            <ul>
-                <li>Mo</li>
-                <li>Tu</li>
-                <li>We</li>
-                <li>Th</li>
-                <li>Fr</li>
-                <li>Sa</li>
-                <li>Su</li>
-            </ul>
-        </div>
+    <table>
+        <tr>
+            <td> <button class="calButton" id="decYear"> < </button> </td>
+            <th colspan="5" id="year"></th>
+            <td> <button class="calButton" id="incYear"> > </button> </td>
+        </tr>
         
-        <div class="days">
-            <ul id="listOfDays">
-                
-            </ul>
-        </div>
-    </div>
+        <tr>
+            <td> <button class="calButton" id="decMonth"> < </button> </td>
+            <th colspan="5" id="month"></th>
+            <td> <button class="calButton" id="incMonth"> > </button> </td>
+        </tr>
+        
+        <tr id="weekDays">
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+
+        <tr id="row1">
+        </tr>
+
+        <tr id="row2">
+        </tr>
+
+        <tr id="row3"">
+        </tr>
+
+        <tr id="row4">
+        </tr>
+
+        <tr id="row5">
+        </tr>
+
+        <tr id="row6">
+        </tr>
+    </table>
 </body>
 <script src="script.js"></script>
 </html>

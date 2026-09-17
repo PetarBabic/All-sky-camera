@@ -3,22 +3,93 @@ var dd = String(today.getDate()).padStart(2, '0');
 var mm = today.getMonth() //January is 0!
 var yyyy = today.getFullYear();
 
-const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+var currentDay = today.getDate()
 
-function printDays() {
-    let dayList = document.getElementById("listOfDays");
+document.querySelectorAll(".calButton").forEach(function (button) {
+  button.addEventListener("click", function (e) {
+    if(e.target.id == "incMonth"){
+        if(mm + 1 == 12) {
+            yyyy++;
+            mm = 0
+        }
+        else
+            mm++;
+    }
+    if(e.target.id == "decMonth"){
+        if(mm - 1 == -1) {
+            yyyy--;
+            mm = 11
+        }
+        else
+            mm--;
+    }
+    if(e.target.id == "incYear")
+        yyyy++;
+    if(e.target.id == "decYear")
+        yyyy--;
 
-    for (let i = 1; i < days[mm] + 1; i++) {
-        var li = document.createElement("li");
-        li.appendChild(document.createTextNode(i));
-        dayList.appendChild(li)
+    makeCalendar(yyyy, mm);
+
+    console.log("Click happened for: " + e.target.id);
+  });
+});
+
+/* Returns the first DOW of the month as a number 0 - Sunday, 1 - Monday, ...
+   Months start at 0 - January, 1 - February, ... */
+function firstDayOfTheMonth(year, month) {
+    var day = new Date(year, month, 1).getDay();
+    return day;
+}
+
+/* Returns the last day of the month */
+function lastDayOfTheMonth(year, month) {
+    var day = new Date(year,month,0).getDate();
+    return day;
+}
+
+function makeCalendar(year, month) {
+    var firstDay = firstDayOfTheMonth(year, month);
+    var lastDay = lastDayOfTheMonth(year, month);
+
+    var days = 1
+
+    let yearRow = document.getElementById("year");
+    yearRow.textContent = year;
+    let monthRow = document.getElementById("month");
+    monthRow.textContent = months[month];
+
+
+
+    for(var i = 1; i <= 6; i++) {
+        let row = document.getElementById("row" + String(i));
+        row.replaceChildren();
+
+        for(var j = 1; j <= 7; j++) {
+            const cell = document.createElement("td");
+            const button = document.createElement("button");
+
+            if(i == 1) {
+                if(j >= firstDay) {
+                    button.textContent = days;
+                    days++;
+                }
+            }
+            else {
+                if(days <= lastDay){
+                    button.textContent = days;
+                    days++;
+                }
+            }
+            
+            cell.appendChild(button);
+            row.appendChild(cell);
+        }
     }
 }
 
-function setCurrentDate() {
-    document.getElementById("currentMonth").textContent = String(months[mm]) + " " + String(yyyy)
-}
+
+
 function loadImage(path) {
     let full = document.getElementById("full-sized_image");
     let med = document.getElementById("medium_image");
@@ -52,7 +123,6 @@ function loadThumbnails() {
 }
 
 window.onload = function() {
-    printDays()
-    setCurrentDate()
     loadThumbnails()
+    makeCalendar(yyyy, mm)
 };
