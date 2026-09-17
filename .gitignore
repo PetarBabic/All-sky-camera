@@ -5,3 +5,4 @@
 *.cfg
 /images/
 .DS_Store
+/web server/images
