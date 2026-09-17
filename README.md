@@ -4,6 +4,7 @@ Continuation of an all-sky camera project at Aalto University
 
 ## Specifications
 Camera: ZWO ASI676MC
+
 Computer: Raspberry Pi 5
 
 ## Set-up and Requirments 
