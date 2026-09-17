@@ -1,10 +1,13 @@
+
+/* ------------------------------------- */
+/* JS for calendar display and selection */
 var today = new Date()
 var dd = String(today.getDate()).padStart(2, '0');
 var mm = today.getMonth() //January is 0!
 var yyyy = today.getFullYear();
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-var currentDay = today.getDate()
+var selectedDay = today.getDate()
 
 document.querySelectorAll(".calButton").forEach(function (button) {
   button.addEventListener("click", function (e) {
@@ -30,9 +33,24 @@ document.querySelectorAll(".calButton").forEach(function (button) {
         yyyy--;
 
     makeCalendar(yyyy, mm);
-
-    console.log("Click happened for: " + e.target.id);
   });
+});
+
+document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("inactive")) return;
+
+    const active = document.querySelector(".active");
+
+    if (active) {
+        active.classList.remove("active");
+        active.classList.add("inactive");
+    }
+
+    e.target.classList.remove("inactive");
+    e.target.classList.add("active");
+    selectedDay = e.target.getHTML();
+
+    loadThumbnails()
 });
 
 /* Returns the first DOW of the month as a number 0 - Sunday, 1 - Monday, ...
@@ -59,8 +77,6 @@ function makeCalendar(year, month) {
     let monthRow = document.getElementById("month");
     monthRow.textContent = months[month];
 
-
-
     for(var i = 1; i <= 6; i++) {
         let row = document.getElementById("row" + String(i));
         row.replaceChildren();
@@ -68,6 +84,13 @@ function makeCalendar(year, month) {
         for(var j = 1; j <= 7; j++) {
             const cell = document.createElement("td");
             const button = document.createElement("button");
+
+            if(year == today.getFullYear() && month == today.getMonth() && days == today.getDate()) {
+                button.classList.add("active");
+            }
+            else {
+                button.classList.add("inactive");
+            }
 
             if(i == 1) {
                 if(j >= firstDay) {
@@ -87,11 +110,19 @@ function makeCalendar(year, month) {
         }
     }
 }
+/* ------------------------------------- */
 
 
+/* ------------------------------------- */
+/* JS for getting all of the images */
+/* Displaying all of the thumbnails */
+/* Displaying the current picture */
 
-function loadImage(path) {
-    let full = document.getElementById("full-sized_image");
+var imageList = [];
+
+async function loadImage(path) {
+    let full = await (await fetch("/api/latest/filepath_full")).json();
+
     let med = document.getElementById("medium_image");
 
     path = path.replace("thumbnail", "full-sized");
@@ -102,16 +133,20 @@ function loadImage(path) {
 }
 
 
-function loadThumbnails() {
-    var path = "images/thumbnail/2034-"
+async function loadThumbnails() {
+    const date = `${yyyy}-${String(mm + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+    const images = await (await fetch(`/api/${date}`)).json();
+
     let imageList = document.getElementById("imageList");
 
-    for(let i = 10; i <= 27; i++) {
+    imageList.replaceChildren();
+
+    for(let i = 0; i < images.length; i++) {
         let li = document.createElement("li");
         let button = document.createElement("button");
         let img = document.createElement("img");
 
-        var tmp_path = path + String(i) + ".jpg";
+        var tmp_path = images[i];
 
         img.src = tmp_path
         button.addEventListener("click", () => loadImage(tmp_path));
@@ -122,7 +157,29 @@ function loadThumbnails() {
     }
 }
 
+
 window.onload = function() {
     loadThumbnails()
     makeCalendar(yyyy, mm)
+    loadImage()
 };
+
+// window.addEventListener('keydown', (event) => {
+//     var element = document.getElementById("medium_image");
+//     const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+
+//     switch (event.key) {
+//     case "ArrowLeft":
+//         loadImage()
+//         break;
+//     case "ArrowRight":
+//         loadImage()
+//         break;
+//     case "ArrowUp":
+//         // Up pressed
+//         break;
+//     case "ArrowDown":
+//         // Down pressed
+//         break;
+// }
+// });
