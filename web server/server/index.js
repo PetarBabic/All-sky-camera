@@ -4,6 +4,17 @@ const app = express();
 const path = require('path');
 const Database = require("better-sqlite3");
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'images/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname);
+    }
+})
+const upload = multer({ storage })
+
 const db = new Database("./pictures.db");
 
 app.use(express.static(path.join(__dirname, "../frontend")));
@@ -100,6 +111,10 @@ app.get("/api/:path/:date/:time", (req, res) => {
 
     res.json(imgs.map(row => row[path]));
 });
+
+app.post("/api/images", upload.single('file'), (req, res) => {
+    res.send("Sent succesfully!");
+})
 
 app.use("/images", express.static(path.join(__dirname, "/images")));
 
