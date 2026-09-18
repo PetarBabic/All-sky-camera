@@ -46,7 +46,7 @@ app.get("/api/:date", (req, res) => {
     const { date } = req.params;
 
     const img = db.prepare(`
-        SELECT filepath_thumbnail FROM images
+        SELECT filepath_thumbnail, time FROM images
         WHERE date = ?
         ORDER BY date DESC, time DESC
     `).all(date);
@@ -54,7 +54,8 @@ app.get("/api/:date", (req, res) => {
     if (!img) {
         return res.status(404).json({ error: "No images found" });
     }
-    res.json(img.map(row => row.filepath_thumbnail));
+
+    res.json(img);
 })
 
 app.get("/", (request, response) => {
@@ -64,6 +65,40 @@ app.get("/", (request, response) => {
         }
         response.send(html);
     })
+});
+
+app.get("/api/metadata/:date/:time", (req, res) => {
+    const { date, time } = req.params;
+
+    const data = db.prepare(`
+        SELECT aurora, cloudy, meteor
+        FROM images
+        WHERE date = @date AND time = @time
+    `).get({ date, time });
+
+    if (!data) {
+        return res.status(404).json({ error: "No images found" });
+    }
+
+    res.json(data);
+});
+
+app.get("/api/:path/:date/:time", (req, res) => {
+    const { path, date, time } = req.params;
+
+    const allowedTypes = ["filepath_full", "filepath_medium", "filepath_thumbnail"];
+
+    if(!allowedTypes.includes(path)) {
+        return res.status(400).json({ error: "Invalid type" });
+    }
+
+    const imgs = db.prepare(`
+        SELECT ${path}
+        FROM images
+        WHERE date = @date AND time = @time
+    `).all({ date, time });
+
+    res.json(imgs.map(row => row[path]));
 });
 
 app.use("/images", express.static(path.join(__dirname, "/images")));

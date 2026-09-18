@@ -120,18 +120,41 @@ function makeCalendar(year, month) {
 
 var imageList = [];
 
-async function loadImage(path) {
-    let full = await (await fetch("/api/latest/filepath_full")).json();
+async function loadImage(date, time) {
+    var full_path = await (await fetch("/api/filepath_full/" + date + "/" + time)).json();
+    var medium_path = await (await fetch("/api/filepath_medium/" + date + "/" + time)).json();
+    var metadata = await (await fetch("/api/metadata/" + date + "/" + time)).json();
 
+    console.log(metadata);
+
+    document.getElementById("aurora").textContent = "Aurora: " + metadata.aurora;
+    document.getElementById("cloudy").textContent = "Cloudy: " + metadata.cloudy;
+    document.getElementById("meteorite").textContent = "Bolide: " + metadata.meteor;
+    document.getElementById("date-time").textContent = date + " " + time;
+
+    let full = document.getElementById("full_image")
     let med = document.getElementById("medium_image");
 
-    path = path.replace("thumbnail", "full-sized");
-    full.href = path;
-
-    path = path.replace("full-sized", "medium");
-    med.src = path;
+    full.href = full_path;
+    med.src = medium_path;
 }
 
+async function loadLatestImage() {
+    image_data = await (await fetch("/api/latest/")).json();
+    var full_path = image_data.filepath_full;
+    var medium_path = image_data.filepath_medium;
+
+    document.getElementById("aurora").textContent = "Aurora: " + image_data.aurora;
+    document.getElementById("cloudy").textContent = "Cloudy: " + image_data.cloudy;
+    document.getElementById("meteorite").textContent = "Bolide: " + image_data.meteor;
+    document.getElementById("date-time").textContent = image_data.date + " " + image_data.time;
+
+    let full = document.getElementById("full_image")
+    let med = document.getElementById("medium_image");
+
+    full.href = full_path;
+    med.src = medium_path;
+}
 
 async function loadThumbnails() {
     const date = `${yyyy}-${String(mm + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
@@ -146,10 +169,10 @@ async function loadThumbnails() {
         let button = document.createElement("button");
         let img = document.createElement("img");
 
-        var tmp_path = images[i];
+        var tmp_path = images[i].filepath_thumbnail;
 
         img.src = tmp_path
-        button.addEventListener("click", () => loadImage(tmp_path));
+        button.addEventListener("click", () => loadImage(date, images[i].time));
 
         button.appendChild(img);
         li.appendChild(button);
@@ -161,7 +184,7 @@ async function loadThumbnails() {
 window.onload = function() {
     loadThumbnails()
     makeCalendar(yyyy, mm)
-    loadImage()
+    loadLatestImage();
 };
 
 // window.addEventListener('keydown', (event) => {
