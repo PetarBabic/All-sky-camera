@@ -6,6 +6,8 @@ import csv
 import exif
 from datetime import datetime
 import os
+import requests
+import re
 
 image_metadata = {
     # 'camera_owner_name': 'Aalto University',
@@ -40,6 +42,18 @@ def encode_image(img, filename):
 
     with open(filename, 'wb') as new_image_file:
         new_image_file.write(exif_jpg.get_file())
+        
+    return filename
+
+def send_image(path):
+    filename = re.findall(r'\d{4}-\d{2}\.jpg', path)[0];
+    url = 'http://192.168.0.101:3000/api/images'
+    
+    with open(path, 'rb') as f:
+        r = requests.post(
+            url,
+            files={'file': (filename, f, 'image/jpeg')}
+        )
 
 
 def camera_set_settings(camera: ZWOCamera):
@@ -50,6 +64,7 @@ def camera_set_settings(camera: ZWOCamera):
     if(exposure_time > 40):
         exposure_time = 40
         
+    print(exposure_time)
     camera.exposure = int(exposure_time * 1e6)
     camera.gain = image_metadata['gain']    
 
@@ -78,7 +93,7 @@ def take_picture():
             image_metadata['datetime'] = str(datetime.now())
             im = camera.shot()
 
-            encode_image(im, path)
+            send_image(encode_image(im, path))
 
 if __name__ == "__main__":
     while(True):

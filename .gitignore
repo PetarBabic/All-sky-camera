@@ -5,5 +5,5 @@
 *.cfg
 /images/
 .DS_Store
-/*/*/images
+/*/*/images/*/
 */*/node_modules
