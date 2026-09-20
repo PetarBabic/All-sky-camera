@@ -19,3 +19,6 @@ source bin/activate
 
 pip -r requirements.txt
 ```
+## Basic architecture
+
+![](https://github.com/PetarBabic/All-sky-camera/blob/6963aedaff5ea47280d5ed030373f3f3d4259eef/Documentation/Architecture.drawio.png)
