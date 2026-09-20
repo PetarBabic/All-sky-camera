@@ -21,7 +21,7 @@ mkdir -p "images/$date_folder/full"
 mkdir -p "images/$date_folder/medium"
 mkdir -p "images/$date_folder/thumbnail"
 
-magick "$1" -resize 200x -quality 50 \
+magick "$1" -resize 100x -quality 50 \
     "images/$date_folder/thumbnail/$filename"
 
 magick "$1" -resize 1000x -quality 50 \

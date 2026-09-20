@@ -7,3 +7,4 @@
 .DS_Store
 /*/*/images/*/
 */*/node_modules
+*.db
