@@ -1,7 +1,491 @@
-/*Vertical scrolling for image thumbnails*/
-nav ul{height:200px; width:18%;}
-nav ul{overflow:hidden; overflow-y:scroll;} 
+/* =========================
+   Base / page
+   ========================= */
 
-.active {
-  background: red;
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #151922;
+  color: #e8ecf1;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  overflow: hidden;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px minmax(300px, 420px);
+  gap: 14px;
+  width: 100vw;
+  height: 100vh;
+  padding: 14px;
+}
+
+
+/* =========================
+   Main image
+   ========================= */
+
+.currentImage {
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e2430;
+  border: 1px solid #303846;
+  border-radius: 12px;
+  padding: 14px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.currentImage a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  min-height: 0;
+}
+
+#medium_image {
+  display: block;
+
+  width: 90%;
+  max-width: 100%;
+  max-height: calc(100vh - 130px);
+
+  object-fit: contain;
+
+  border-radius: 8px;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#medium_image:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.45);
+}
+
+#date-time,
+#aurora,
+#cloudy,
+#meteorite {
+  margin-top: 5px;
+  text-align: center;
+}
+
+#date-time {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+#aurora {
+  color: #7ee787;
+}
+
+#cloudy {
+  color: #79c0ff;
+}
+
+#meteorite {
+  color: #ffcf70;
+}
+
+
+/* =========================
+   Thumbnail list
+   ========================= */
+
+.otherImages {
+  min-width: 0;
+  min-height: 0;
+
+  background: #1e2430;
+  border: 1px solid #303846;
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+.otherImages nav {
+  height: 100%;
+}
+
+#imageList {
+  height: 100%;
+  width: 100%;
+
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #4b5565 transparent;
+}
+
+/* Chrome / Edge / Safari */
+#imageList::-webkit-scrollbar {
+  width: 7px;
+}
+
+#imageList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#imageList::-webkit-scrollbar-thumb {
+  background: #4b5565;
+  border-radius: 10px;
+}
+
+#imageList::-webkit-scrollbar-thumb:hover {
+  background: #667085;
+}
+
+
+/* Make dynamically-created thumbnail buttons look nice */
+
+#imageList li {
+  margin-bottom: 8px;
+}
+
+#imageList button {
+  display: block;
+
+  width: 100%;
+  padding: 4px;
+
+  background: #272e3b;
+  border: 1px solid #394252;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+  color: white;
+  font-size: 1rem;
+}
+
+#imageList button:hover {
+  background: #323b4b;
+  border-color: #596579;
+  transform: translateY(-1px);
+}
+
+#imageList button img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+#imageList button.activeImage,
+#imageList .activeImage {
+  background: #315f52;
+  border-color: #55c79a;
+}
+
+
+/* =========================
+   Calendar
+   ========================= */
+
+.calendar {
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e2430;
+  border: 1px solid #303846;
+  border-radius: 12px;
+
+  padding: 16px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.calendar table {
+  width: 100%;
+  max-width: 390px;
+
+  border-collapse: separate;
+  border-spacing: 4px;
+
+  table-layout: fixed;
+}
+
+.calendar th,
+/* Calendar days */
+.calendar tr:not(#weekDays) td {
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 4px;
+}
+
+.calendar th {
+  font-weight: 600;
+  color: #dce2ea;
+}
+
+#year,
+#month {
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+#weekDays th {
+  font-size: 0.75rem;
+  color: #8994a5;
+  text-transform: uppercase;
+}
+
+.calButton {
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid #3c4656;
+  border-radius: 7px;
+
+  background: #272e3b;
+  color: #e8ecf1;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.calButton:hover {
+  background: #354052;
+  border-color: #667085;
+  transform: scale(1.05);
+}
+
+.calendar td {
+  border-radius: 7px;
+}
+
+.calendar tr:not(#weekDays) td {
+  background: #252c38;
+}
+
+/* Subtle hover effect */
+.calendar tr:not(#weekDays) td:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+/* Calendar days */
+.calendar tr:not(#weekDays) td {
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 4px;
+  cursor: pointer;
+}
+
+/* Hover */
+.calendar tr:not(#weekDays) td:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+/* Currently selected date */
+.calendar td.active {
+  background: #4f9cff;
+  color: #ffffff;
+  border-radius: 7px;
+  font-weight: 700;
+
+  box-shadow:
+    0 0 0 2px rgba(79, 156, 255, 0.25),
+    0 4px 12px rgba(79, 156, 255, 0.35);
+
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.calendar td.active:hover {
+  background: #62a8ff;
+
+  box-shadow:
+    0 0 0 2px rgba(98, 168, 255, 0.3),
+    0 5px 16px rgba(79, 156, 255, 0.45);
+}
+
+/* =========================
+   Tablet
+   ========================= */
+
+@media (max-width: 1000px) {
+  .container {
+    grid-template-columns: minmax(0, 1fr) 150px minmax(260px, 340px);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  #medium_image {
+    width: 100%;
+  }
+
+  .calendar {
+    padding: 10px;
+  }
+
+  .calendar th,
+  .calendar td {
+    padding: 6px;
+  }
+}
+
+
+/* =========================
+   Phone
+   ========================= */
+
+@media (max-width: 700px) {
+  body {
+    overflow: auto;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+
+    gap: 10px;
+    padding: 10px;
+  }
+
+  /* Main image comes first */
+  .currentImage {
+    flex: none;
+
+    width: 100%;
+    min-height: 0;
+
+    padding: 10px;
+  }
+
+  #medium_image {
+    width: 100%;
+    max-height: 55vh;
+  }
+
+  /* Thumbnail list comes second */
+  .otherImages {
+    flex: none;
+
+    width: 100%;
+    height: 220px;
+  }
+
+  #imageList {
+    display: flex;
+    flex-direction: row;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    gap: 8px;
+  }
+
+  #imageList li {
+    flex: 0 0 130px;
+    margin: 0;
+  }
+
+  #imageList button {
+    height: 100%;
+  }
+
+  /* Calendar comes third */
+  .calendar {
+    flex: none;
+
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .calendar table {
+    max-width: 500px;
+  }
+}
+
+
+/* =========================
+   Small phones
+   ========================= */
+
+@media (max-width: 420px) {
+  .container {
+    padding: 7px;
+    gap: 7px;
+  }
+
+  .currentImage,
+  .otherImages,
+  .calendar {
+    border-radius: 9px;
+  }
+
+  #medium_image {
+    max-height: 50vh;
+  }
+
+  .otherImages {
+    height: 170px;
+  }
+
+  #imageList li {
+    flex-basis: 105px;
+  }
+
+  .calendar {
+    padding: 7px;
+    min-height: 280px;
+  }
+
+  .calendar th,
+  .calendar td {
+    padding: 4px;
+  }
+
+  #year,
+  #month {
+    font-size: 1.1rem;
+  }
 }

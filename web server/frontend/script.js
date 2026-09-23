@@ -83,29 +83,27 @@ function makeCalendar(year, month) {
 
         for(var j = 1; j <= 7; j++) {
             const cell = document.createElement("td");
-            const button = document.createElement("button");
 
             if(year == today.getFullYear() && month == today.getMonth() && days == today.getDate()) {
-                button.classList.add("active");
+                cell.classList.add("active");
             }
             else {
-                button.classList.add("inactive");
+                cell.classList.add("inactive");
             }
 
             if(i == 1) {
                 if(j >= firstDay) {
-                    button.textContent = days;
+                    cell.textContent = days;
                     days++;
                 }
             }
             else {
                 if(days <= lastDay){
-                    button.textContent = days;
+                    cell.textContent = days;
                     days++;
                 }
             }
             
-            cell.appendChild(button);
             row.appendChild(cell);
         }
     }
@@ -124,8 +122,6 @@ async function loadImage(date, time) {
     var full_path = await (await fetch("/api/filepath_full/" + date + "/" + time)).json();
     var medium_path = await (await fetch("/api/filepath_medium/" + date + "/" + time)).json();
     var metadata = await (await fetch("/api/metadata/" + date + "/" + time)).json();
-
-    console.log(metadata);
 
     document.getElementById("aurora").textContent = "Aurora: " + metadata.aurora;
     document.getElementById("cloudy").textContent = "Cloudy: " + metadata.cloudy;
@@ -172,14 +168,28 @@ async function loadThumbnails() {
         var tmp_path = images[i].filepath_thumbnail;
 
         img.src = tmp_path
-        button.addEventListener("click", () => loadImage(date, images[i].time));
+        button.addEventListener("click", function () {
+            loadImage(date, images[i].time);
+
+            const active = document.querySelector(".activeImage");
+
+            if (active) {
+                active.classList.remove("activeImage");
+                active.classList.add("inactiveImage");
+            }
+
+            this.classList.remove("inactiveImage");
+            this.classList.add("activeImage");
+        });
+
+        button.textContent = images[i].time
 
         button.appendChild(img);
         li.appendChild(button);
+        li.setAttribute('id', i);
         imageList.appendChild(li)
     }
 }
-
 
 window.onload = function() {
     loadThumbnails()
@@ -187,22 +197,29 @@ window.onload = function() {
     loadLatestImage();
 };
 
-// window.addEventListener('keydown', (event) => {
-//     var element = document.getElementById("medium_image");
-//     const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+window.addEventListener('keydown', (event) => {
+    const active = Number(document.querySelector(".activeImage").parentElement.id);
 
-//     switch (event.key) {
-//     case "ArrowLeft":
-//         loadImage()
-//         break;
-//     case "ArrowRight":
-//         loadImage()
-//         break;
-//     case "ArrowUp":
-//         // Up pressed
-//         break;
-//     case "ArrowDown":
-//         // Down pressed
-//         break;
-// }
-// });
+    var liElements = document.getElementById("imageList").getElementsByTagName("li");
+
+    console.log(active + 1)
+
+    switch (event.key) {
+    case "ArrowLeft":
+        active = active - 1
+        loadImage()
+        break;
+    case "ArrowRight":
+        active = active + 1
+        loadImage()
+        break;
+    case "ArrowUp":
+        active = active - 1
+        loadImage()
+        break;
+    case "ArrowDown":
+        active = active + 1
+        loadImage()
+        break;
+}
+});

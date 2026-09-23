@@ -112,23 +112,23 @@ app.get("/api/:path/:date/:time", (req, res) => {
     res.json(imgs.map(row => row[path]));
 });
 
-app.post("/api/images", upload.single("file"), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send("No image uploaded");
-    }
+// app.post("/api/images", upload.single("file"), (req, res) => {
+//     if (!req.file) {
+//         return res.status(400).send("No image uploaded");
+//     }
 
-    const { execFileSync } = require("child_process");
+//     const { execFileSync } = require("child_process");
 
-    const output = execFileSync(
-        "./images/save_image.sh",
-        [req.file.path],
-        { encoding: "utf-8" }
-    );
+//     const output = execFileSync(
+//         "./images/save_image.sh",
+//         [req.file.path],
+//         { encoding: "utf-8" }
+//     );
 
-    console.log("Output was:\n", output);
+//     console.log("Output was:\n", output);
 
-    res.send("Sent successfully!");
-});
+//     res.send("Sent successfully!");
+// });
 
 app.use("/images", express.static(path.join(__dirname, "/images")));
 
