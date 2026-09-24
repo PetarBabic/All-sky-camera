@@ -2,7 +2,6 @@
 /* ------------------------------------- */
 /* JS for calendar display and selection */
 var today = new Date()
-var dd = String(today.getDate()).padStart(2, '0');
 var mm = today.getMonth() //January is 0!
 var yyyy = today.getFullYear();
 
@@ -197,29 +196,38 @@ window.onload = function() {
     loadLatestImage();
 };
 
-window.addEventListener('keydown', (event) => {
-    const active = Number(document.querySelector(".activeImage").parentElement.id);
+// Arrow navigation
+function changeActive(id, newId) {
+    const oldThumbnail = document.getElementById(id).children[0]
+    const newThumbnail = document.getElementById(newId).children[0]
 
-    var liElements = document.getElementById("imageList").getElementsByTagName("li");
+    oldThumbnail.classList.remove("activeImage");
+    oldThumbnail.classList.add("inactiveImage");
 
-    console.log(active + 1)
+    newThumbnail.classList.add("activeImage");
+    newThumbnail.classList.remove("inactiveImage");
 
-    switch (event.key) {
-    case "ArrowLeft":
-        active = active - 1
-        loadImage()
-        break;
-    case "ArrowRight":
-        active = active + 1
-        loadImage()
-        break;
-    case "ArrowUp":
-        active = active - 1
-        loadImage()
-        break;
-    case "ArrowDown":
-        active = active + 1
-        loadImage()
-        break;
+    newThumbnail.scrollIntoView({ behavior: "smooth", block: "center", inline: "center"});
 }
+
+window.addEventListener('keydown', (event) => {
+    if(document.querySelector(".activeImage") == null)
+        return;
+
+    event.preventDefault()
+    
+    var active = Number(document.querySelector(".activeImage").parentElement.id);
+
+    var liElements = Number(document.getElementById("imageList").getElementsByTagName("li").length);
+
+    if((event.key == "ArrowLeft" || event.key == "ArrowUp") && active != 0) {
+        changeActive(active, active - 1)
+    }
+    else if((event.key == "ArrowRight" || event.key == "ArrowDown") && active < liElements - 1){
+        changeActive(active, active + 1)
+    }
+
+    const time = document.querySelector(".activeImage").textContent
+    const date = `${yyyy}-${String(mm + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+    loadImage(date, time);
 });

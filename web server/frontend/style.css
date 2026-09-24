@@ -142,6 +142,8 @@ body {
 
   scrollbar-width: thin;
   scrollbar-color: #4b5565 transparent;
+
+  scroll-behavior: smooth;
 }
 
 /* Chrome / Edge / Safari */
